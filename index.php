@@ -102,4 +102,63 @@ class FileDB
 
         return false;
     }
+
+    /**
+     * @param string $table_name
+     * @param string $row_id
+     * @param string|null $row
+     * @return boolean
+     */
+    public function updateRow($table_name, $row_id, $row) {
+        if ($this->rowExists($table_name, $row_id)) {
+            $this->data[$table_name][$row_id] = $row;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param string $table_name
+     * @param string $row_id
+     */
+    public function deleteRow($table_name, $row_id) {
+        unset($this->data[$table_name][$row_id]);
+    }
+    
+    /**
+     * @param string $table_name
+     * @param string $row_id
+     * @return array|false
+     */
+    public function getRow($table_name, $row_id) {
+        if ($this->rowExists($table_name, $row_id)) {
+            return $this->data[$table_name][$row_id];
+        }
+        return false;
+    }
+
+    /**
+     * @param string $table_name
+     * @param array $conditions
+     * @return array
+     */
+    public function getRowWhere($table_name, $conditions) {
+        if ($this->tableExists($table_name)) {
+            foreach ($table_name as $row) {
+                $isRowMatches = false;
+                foreach ($conditions as $key => $value) {
+                    if (isset($row[$key]) && $row[$key] === $value) {
+                        $isRowMatches = true;
+                    } else {
+                        $isRowMatches = false;
+                        break;
+                    }
+                }
+                if ($isRowMatches) {
+                    return $row;
+                }
+            }
+        }
+        return false;
+    }
 }
