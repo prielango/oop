@@ -168,7 +168,7 @@ class FileDB
         return $rows;
     }
 
-        /**
+    /**
      * @param string $table_name
      * @param array $conditions
      * @return array|false
@@ -178,7 +178,7 @@ class FileDB
         $rows = [];
 
         foreach ($this->data[$table_name] as $row_id => $row) {
-            if (count(array_intersect($row, $conditions)) === count($conditions)) {
+            if (array_intersect($row, $conditions) == $conditions) {
                 $rows[$row_id] = $row;
             }
         }
