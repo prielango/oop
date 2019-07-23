@@ -142,9 +142,10 @@ class FileDB
      * @param array $conditions
      * @return array|false
      */
-    public function getRowWhere($table_name, $conditions) {
+    public function getRowsWhere($table_name, $conditions) {
+        $rows = [];
         if ($this->tableExists($table_name)) {
-            foreach ($table_name as $row) {
+            foreach ($table_name as $row_id => $row) {
                 $isRowMatches = false;
                 foreach ($conditions as $key => $value) {
                     if (isset($row[$key]) && $row[$key] === $value) {
@@ -155,10 +156,10 @@ class FileDB
                     }
                 }
                 if ($isRowMatches) {
-                    return $row;
+                    $rows[$row_id] = $row;
                 }
             }
         }
-        return false;
+        return !empty($rows) ? $rows : false;
     }
 }
