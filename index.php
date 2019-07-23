@@ -140,7 +140,7 @@ class FileDB
     /**
      * @param string $table_name
      * @param array $conditions
-     * @return array
+     * @return array|false
      */
     public function getRowWhere($table_name, $conditions) {
         if ($this->tableExists($table_name)) {
