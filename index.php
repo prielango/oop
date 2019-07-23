@@ -75,7 +75,8 @@ class FileDB
      * @param string $row
      * @return boolean
      */
-    public function rowInsertIfNotExists($table_name, $row_id, $row) {
+    public function rowInsertIfNotExists($table_name, $row_id, $row)
+    {
         if ($this->rowExists($table_name, $row_id)) {
             return false;
         }
@@ -109,7 +110,8 @@ class FileDB
      * @param string|null $row
      * @return boolean
      */
-    public function updateRow($table_name, $row_id, $row) {
+    public function updateRow($table_name, $row_id, $row)
+    {
         if ($this->rowExists($table_name, $row_id)) {
             $this->data[$table_name][$row_id] = $row;
             return true;
@@ -121,16 +123,18 @@ class FileDB
      * @param string $table_name
      * @param string $row_id
      */
-    public function deleteRow($table_name, $row_id) {
+    public function deleteRow($table_name, $row_id)
+    {
         unset($this->data[$table_name][$row_id]);
     }
-    
+
     /**
      * @param string $table_name
      * @param string $row_id
      * @return array|false
      */
-    public function getRow($table_name, $row_id) {
+    public function getRow($table_name, $row_id)
+    {
         if ($this->rowExists($table_name, $row_id)) {
             return $this->data[$table_name][$row_id];
         }
@@ -142,24 +146,43 @@ class FileDB
      * @param array $conditions
      * @return array|false
      */
-    public function getRowsWhere($table_name, $conditions) {
+    public function getRowsWhere($table_name, $conditions)
+    {
         $rows = [];
-        if ($this->tableExists($table_name)) {
-            foreach ($table_name as $row_id => $row) {
-                $isRowMatches = false;
-                foreach ($conditions as $key => $value) {
-                    if (isset($row[$key]) && $row[$key] === $value) {
-                        $isRowMatches = true;
-                    } else {
-                        $isRowMatches = false;
-                        break;
-                    }
-                }
-                if ($isRowMatches) {
-                    $rows[$row_id] = $row;
+
+        foreach ($this->data[$table_name] as $row_id => $row) {
+            $isConditionMet = true;
+
+            foreach ($conditions as $key => $value) {
+                if ($row[$key] !== $value) {
+                    $isConditionMet = false;
+                    break;
                 }
             }
+
+            if ($isConditionMet) {
+                $rows[$row_id] = $row;
+            }
         }
-        return !empty($rows) ? $rows : false;
+
+        return $rows;
+    }
+
+        /**
+     * @param string $table_name
+     * @param array $conditions
+     * @return array|false
+     */
+    public function getRowsWhereCool($table_name, $conditions)
+    {
+        $rows = [];
+
+        foreach ($this->data[$table_name] as $row_id => $row) {
+            if (count(array_intersect($row, $conditions)) === count($conditions)) {
+                $rows[$row_id] = $row;
+            }
+        }
+
+        return $rows;
     }
 }
